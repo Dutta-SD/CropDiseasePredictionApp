@@ -9,7 +9,7 @@ from code import predict
 app = FastAPI()
 
 
-@app.post("/")
+@app.get("/")
 async def root():
     return {"message": "Welcome to crop-disease-prediction"}
 
