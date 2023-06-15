@@ -2,7 +2,7 @@ import os
 from code.apis.prediction import prediction_router
 import uvicorn
 from fastapi import FastAPI
-from backend.code.config import Settings
+from code.config import Settings
 
 
 def setup() -> None:
@@ -19,7 +19,7 @@ def add_routes(app: FastAPI) -> FastAPI:
     Returns:
         FastAPI: App Component with Routers attached
     """
-    app.add_api_route(prediction_router)
+    app.include_router(prediction_router)
     return app
 
 
@@ -34,7 +34,14 @@ def get_app() -> FastAPI:
     return main_application
 
 
+main_application = get_app()
+
+
 if __name__ == "__main__":
     setup()
-    main_application = get_app()
-    uvicorn.run(main_application, host="0.0.0.0", port=Settings.PORT, reload=True)
+    uvicorn.run(
+        "main:main_application",
+        host="0.0.0.0",
+        port=Settings.PORT,
+        reload=True,
+    )
