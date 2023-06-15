@@ -1,35 +1,40 @@
-import io
-
+import os
+from code.apis.prediction import prediction_router
 import uvicorn
-from PIL import Image
-from fastapi import FastAPI, UploadFile, File
-
-from code import predict
-
-app = FastAPI()
+from fastapi import FastAPI
+from backend.code.config import Settings
 
 
-@app.get("/")
-async def root():
-    return {"message": "Welcome to crop-disease-prediction"}
+def setup() -> None:
+    """Initialization"""
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 
-@app.post("/predict")
-async def upload_image_to_predict(file: UploadFile = File(...)):
-    try:
-        contents = file.file.read()
-        uploaded_image = Image.open(io.BytesIO(contents))
-        prediction = predict(uploaded_image)
+def add_routes(app: FastAPI) -> FastAPI:
+    """Adds API routers to the main APP
 
-    except Exception as e:
-        print(e)
-        return {"message": "There was an error uploading the file"}
+    Args:
+        app (FastAPI): Main App Component
 
-    finally:
-        file.file.close()
+    Returns:
+        FastAPI: App Component with Routers attached
+    """
+    app.add_api_route(prediction_router)
+    return app
 
-    return prediction
+
+def get_app() -> FastAPI:
+    """Prepares main application
+
+    Returns:
+        FastAPI: Main Application
+    """
+    main_application = FastAPI(title=Settings.APP_NAME, version=Settings.APP_VERSION)
+    main_application = add_routes(main_application)
+    return main_application
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=9000, reload=True)
+    setup()
+    main_application = get_app()
+    uvicorn.run(main_application, host="0.0.0.0", port=Settings.PORT, reload=True)
