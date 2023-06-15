@@ -19,7 +19,7 @@ disease_classifier = keras.models.load_model(
 def preprocess_image(img: Image.Image):
     # TODO: Add more preprocessing steps
 
-    img_resized = img.resize(Settings.IMAGE_SIZE)
+    img_resized = img.resize(Settings.CLASSIFIER_IMAGE_SIZE)
     arr = np.array(img_resized)[:, :, :3]
     return np.expand_dims(arr, 0).astype(np.float32)
 

@@ -1,5 +1,5 @@
 import os
-from code.apis.prediction import prediction_router
+from code.apis.model import prediction_router
 import uvicorn
 from fastapi import FastAPI
 from code.config import Settings
