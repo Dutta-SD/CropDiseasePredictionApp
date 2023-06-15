@@ -3,13 +3,13 @@ import keras.models
 import numpy as np
 from PIL import Image
 from keras.losses import mean_squared_error
-from code.config import settings
+from code.config import Settings
 from code.model.customF1 import custom_f1
 
 
-outlier_detector = keras.models.load_model(settings.AUTOENCODER_WEIGHTS_PATH)
+outlier_detector = keras.models.load_model(Settings.AUTOENCODER_WEIGHTS_PATH)
 disease_classifier = keras.models.load_model(
-    settings.CLASSIFIER_WEIGHTS_PATH,
+    Settings.CLASSIFIER_WEIGHTS_PATH,
     custom_objects={
         "custom_f1": custom_f1,
     },
@@ -19,7 +19,7 @@ disease_classifier = keras.models.load_model(
 def preprocess_image(img: Image.Image):
     # TODO: Add more preprocessing steps
 
-    img_resized = img.resize(settings.IMAGE_SIZE)
+    img_resized = img.resize(Settings.IMAGE_SIZE)
     arr = np.array(img_resized)[:, :, :3]
     return np.expand_dims(arr, 0).astype(np.float32)
 
