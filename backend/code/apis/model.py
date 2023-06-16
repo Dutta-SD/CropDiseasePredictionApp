@@ -2,16 +2,16 @@ import io
 from fastapi import UploadFile
 from fastapi.routing import APIRouter
 from typing import Dict
-from code.config import Settings
+from code.config import app_config
 from code.utilities import api_utils
 from PIL import Image
 from code.service import classification
 
 
-prediction_router = APIRouter(prefix=f"/{Settings.API_V1}/model")
+prediction_router = APIRouter(prefix=f"/{app_config.API_V1}/model")
 
 
-@prediction_router.get("", status_code=200)
+@prediction_router.get("", status_code=200, tags=["prediction"])
 async def get_model_homepage() -> Dict:
     """Fetch Sample Output to check if API working or not
 
@@ -21,7 +21,7 @@ async def get_model_homepage() -> Dict:
     return api_utils.success_response({"response": "OK"})
 
 
-@prediction_router.post("/predict", status_code=200)
+@prediction_router.post("/predict", status_code=201, tags=["prediction"])
 async def get_prediction(img: UploadFile) -> Dict:
     """Gets classification result for crop disease
 
