@@ -12,8 +12,8 @@ class ImageDataModule(LightningDataModule):
         train_path: str,
         val_path: str,
         test_path: str,
-        batch_size: str,
-        img_size: str,
+        batch_size: int,
+        img_size: int,
     ):
         super().__init__()
         self.train_path = train_path
@@ -57,16 +57,10 @@ class ImageDataModule(LightningDataModule):
 
     def setup(self, stage=None):
         if stage == "fit" or stage is None:
-            self.train_data = ImageFolder(
-                root=self.train_path, transform=self.train_transforms
-            )
-            self.val_data = ImageFolder(
-                root=self.val_path, transform=self.val_transforms
-            )
+            self.train_data = ImageFolder(root=self.train_path, transform=self.train_transforms)
+            self.val_data = ImageFolder(root=self.val_path, transform=self.val_transforms)
         if stage == "test" or stage is None:
-            self.test_data = ImageFolder(
-                root=self.test_path, transform=self.test_transforms
-            )
+            self.test_data = ImageFolder(root=self.test_path, transform=self.test_transforms)
 
     def train_dataloader(self):
         return DataLoader(
