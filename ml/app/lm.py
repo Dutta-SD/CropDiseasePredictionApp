@@ -1,8 +1,8 @@
-from typing import Tuple
+from typing import Tuple, Any
 
 import torch
 from lightning import LightningModule
-from torch import nn
+from torch import nn, Tensor
 from torch.nn import functional as F
 from torch.optim import Adam
 
@@ -24,27 +24,24 @@ class ClassificationModule(LightningModule):
         optimizer = Adam(self.parameters(), lr=1e-3)
         return optimizer
 
-    def training_step(
-        self, batch: Tuple[torch.Tensor, ...], batch_idx: int
-    ) -> torch.Tensor:
+    def training_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> torch.Tensor:
         images, labels = batch
         outputs = self(images)
         loss = F.cross_entropy(outputs, labels)
-        self.log("TL", loss, prog_bar=True, logger=True)
+        self.log("TL", loss, prog_bar=True)
         return loss
 
-    def validation_step(
-        self, batch: Tuple[torch.Tensor, ...], batch_idx: int
-    ) -> Tuple[str, torch.Tensor]:
+    def validation_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> dict[str, Tensor | float | Any]:
         images, labels = batch
         outputs = self(images)
         loss = F.cross_entropy(outputs, labels)
         acc = self._accuracy(labels, outputs)
-        self.log("VL", loss, prog_bar=True, logger=True)
-        self.log("VA", acc, prog_bar=True, logger=True)
+        self.log("VL", loss, prog_bar=True)
+        self.log("VA", acc, prog_bar=True)
         return {"VL": loss, "VA": acc}
 
-    def _accuracy(self, labels, outputs):
+    @staticmethod
+    def _accuracy(labels, outputs):
         preds = torch.argmax(outputs, dim=1)
         acc = torch.sum(preds == labels).float() / len(labels)
         return acc
@@ -53,4 +50,4 @@ class ClassificationModule(LightningModule):
         images, labels = batch
         outputs = self(images)
         loss = F.cross_entropy(outputs, labels)
-        self.log("TL", loss, logger=True)
+        self.log("TL", loss)

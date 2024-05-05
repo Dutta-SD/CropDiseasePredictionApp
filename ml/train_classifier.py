@@ -4,7 +4,7 @@ from lightning.pytorch.callbacks import ModelCheckpoint, TQDMProgressBar
 from app.config import ModelConfig
 from app.data import ImageDataModule
 from app.lm import ClassificationModule
-from app.model import DiseaseClassificationModel
+from app.models.classification import DiseaseClassificationModel
 
 ckpt_callback = ModelCheckpoint(
     dirpath="logs/PlantDiseaseClassificationModel",

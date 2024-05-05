@@ -12,8 +12,8 @@ class ImageDataModule(LightningDataModule):
         train_path: str,
         val_path: str,
         test_path: str,
-        batch_size: str,
-        img_size: str,
+        batch_size: int,
+        img_size: int,
     ):
         super().__init__()
         self.train_path = train_path
