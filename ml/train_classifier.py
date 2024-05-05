@@ -17,10 +17,7 @@ ckpt_callback = ModelCheckpoint(
 tqdm_callback = TQDMProgressBar(refresh_rate=10)
 
 
-model = DiseaseClassificationModel(
-    ModelConfig.PRETRAINED_MODEL_NAME,
-    num_classes=ModelConfig.NUM_OUTPUT_CLASSES,
-)
+model = DiseaseClassificationModel(ModelConfig.PRETRAINED_MODEL_NAME)
 
 datamodule = ImageDataModule(
     train_path=ModelConfig.TRAIN_DATA_PATH,
@@ -39,7 +36,7 @@ seed_everything(42)
 trainer = Trainer(
     max_epochs=50,
     callbacks=[ckpt_callback, tqdm_callback],
-    accelerator="cpu",
+    accelerator="gpu",
     num_sanity_val_steps=2,
     default_root_dir="logs",
 )

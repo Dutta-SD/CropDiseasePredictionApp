@@ -10,36 +10,70 @@ from torchvision.models import (
 )
 from torchvision.models._api import WeightsEnum
 
-
-# fix for hash
-def get_state_dict(self, *args, **kwargs):
-    kwargs.pop("check_hash")
-    return load_state_dict_from_url(self.url, *args, **kwargs)
+from app.config import ModelConfig
 
 
-WeightsEnum.get_state_dict = get_state_dict
+# Pytorch fix for hash mismatch
+# def get_state_dict(self, *args, **kwargs):
+#     kwargs.pop("check_hash")
+#     return load_state_dict_from_url(self.url, *args, **kwargs)
+
+
+# WeightsEnum.get_state_dict = get_state_dict
+
+
+class MLPHead(nn.Module):
+    def __init__(self, in_features: int, num_output_classes: int) -> None:
+        super().__init__()
+        self.classifier = nn.Sequential(
+            nn.Linear(in_features, 2048),
+            nn.GELU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(2048, num_output_classes),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.classifier(x)
 
 
 class PretrainedModelFactory:
+    # TODO: implement all models
+
+    @staticmethod
+    def _efficientnet_b0():
+        model = torchvision.models.efficientnet_b0(
+            weights=EfficientNet_B0_Weights.DEFAULT
+        )
+        __class__._freeze_pretrained_weights(model)
+        model.classifier = MLPHead(
+            in_features=model.classifier[1].in_features,
+            num_output_classes=ModelConfig.NUM_OUTPUT_CLASSES,
+        )
+        return model
+
+    @staticmethod
+    def _freeze_pretrained_weights(model):
+        for param in model.parameters():
+            param.requires_grad = False
+
+    @staticmethod
+    def _resnet_50():
+        raise NotImplementedError
+
+    @staticmethod
+    def _mobilenet_v3_small():
+        raise NotImplementedError
+
+    @staticmethod
+    def _vit_b_16():
+        raise NotImplementedError
+
     def __init__(self):
         self.available_models = {
-            "efficientnet_b0": (
-                torchvision.models.efficientnet_b0,
-                EfficientNet_B0_Weights.DEFAULT,
-                lambda x: x.classifier[1].in_features,
-            ),
-            "resnet_50": (
-                torchvision.models.resnet50,
-                ResNet50_Weights.DEFAULT,
-            ),
-            "vit_b_16": (
-                torchvision.models.vit_b_16,
-                ViT_B_16_Weights.DEFAULT,
-            ),  # Parameter Heavy
-            "mobilenet_v3_small": (
-                torchvision.models.mobilenet_v3_small,
-                MobileNet_V3_Small_Weights.DEFAULT,
-            ),
+            "efficientnet_b0": self._efficientnet_b0,
+            "resnet_50": self._resnet_50,
+            "vit_b_16": self._vit_b_16,
+            "mobilenet_v3_small": self._mobilenet_v3_small,
         }
 
     def get_model(self, model_name: str) -> nn.Module:
@@ -47,37 +81,14 @@ class PretrainedModelFactory:
             raise ValueError(
                 f"Model '{model_name}' not available. Choose from {self.available_models.keys()}"
             )
-        model_builder, weights, get_out_features = self.available_models[model_name]
-        return model_builder(weights=weights), get_out_features
-
-
-class MLPHead(nn.Module):
-    def __init__(self, in_features: int, num_classes: int) -> None:
-        super().__init__()
-        self.classifier = nn.Sequential(
-            nn.Linear(in_features, 2048),
-            nn.GELU(),
-            nn.Dropout(p=0.5),
-            nn.Linear(2048, num_classes),
-        )
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.classifier(x)
+        return self.available_models[model_name]()
 
 
 class DiseaseClassificationModel(nn.Module):
-    def __init__(self, model_name: str, num_classes: int) -> None:
+    def __init__(self, model_name: str) -> None:
         super().__init__()
         factory = PretrainedModelFactory()
-        self.feature_extractor, get_out_features = factory.get_model(model_name)
-        self._freeze_pretrained_weights()
-        self.classifier = MLPHead(get_out_features(self.feature_extractor), num_classes)
-
-    def _freeze_pretrained_weights(self):
-        for param in self.feature_extractor.parameters():
-            param.requires_grad = False
+        self.model = factory.get_model(model_name)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        features = self.feature_extractor.features(x)
-        features = features.view(features.size(0), -1)
-        return self.classifier(features)
+        return self.model(x)
