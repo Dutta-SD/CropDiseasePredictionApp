@@ -60,9 +60,13 @@ class ImageDataModule(LightningDataModule):
             self.train_data = ImageFolder(
                 root=self.train_path, transform=self.train_transforms
             )
-            self.val_data = ImageFolder(root=self.val_path, transform=self.val_transforms)
+            self.val_data = ImageFolder(
+                root=self.val_path, transform=self.val_transforms
+            )
         if stage == "test" or stage is None:
-            self.test_data = ImageFolder(root=self.test_path, transform=self.test_transforms)
+            self.test_data = ImageFolder(
+                root=self.test_path, transform=self.test_transforms
+            )
 
     def train_dataloader(self):
         return DataLoader(
