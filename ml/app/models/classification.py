@@ -3,9 +3,9 @@ import torchvision
 from torch import nn
 from torchvision.models import EfficientNet_B0_Weights, ResNet50_Weights
 
-from app.config import ModelConfig
+from ml.app.config import ModelConfig
 
-
+# TODO: Uncomment if needed
 # Pytorch fix for hash mismatch
 # def get_state_dict(self, *args, **kwargs):
 #     kwargs.pop("check_hash")
@@ -30,8 +30,6 @@ class MLPHead(nn.Module):
 
 
 class PretrainedModelFactory:
-    # TODO: implement all models
-
     @staticmethod
     def _freeze_pretrained_weights(model):
         for param in model.parameters():

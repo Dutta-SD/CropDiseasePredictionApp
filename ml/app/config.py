@@ -17,5 +17,5 @@ class ModelConfig:
     IMG_MEAN: tuple = (0.229, 0.224, 0.225)
     VAL_LOSS: str = "VL"
     PRETRAINED_MODEL_NAME: str = "resnet_50"
-    CLASSIFY_MODEL_CHECKPOINT: str = "service/static/PlantDiseaseClassificationModel/classify_best.ckpt"
+    CLASSIFY_MODEL_CHECKPOINT: str = "service/static/PlantDiseaseClassificationModel/best.ckpt"
     PRED2LABEL={-1: "-1"}

@@ -7,8 +7,7 @@ from app.lm import ClassificationModule
 from app.models.classification import DiseaseClassificationModel
 
 ckpt_callback = ModelCheckpoint(
-    dirpath="ml/logs/PlantDiseaseClassificationModel",
-    filename="model" + "_{epoch:02d}_{VL:.2f}",
+    filename="model" + "_{epoch:02d}_{VA:.2f}",
     save_top_k=1,
     mode="max",
     monitor=ModelConfig.VAL_LOSS,
@@ -34,11 +33,9 @@ l_module = ClassificationModule(
 
 seed_everything(42)
 trainer = Trainer(
-    max_epochs=50,
+    max_epochs=25,
     callbacks=[ckpt_callback, tqdm_callback],
     num_sanity_val_steps=2,
-    default_root_dir="logs",
-    accelerator="mps"
 )
 
 
