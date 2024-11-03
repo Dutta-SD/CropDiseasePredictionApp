@@ -36,7 +36,6 @@ seed_everything(42)
 trainer = Trainer(
     max_epochs=50,
     callbacks=[ckpt_callback, tqdm_callback],
-    accelerator="gpu",
     num_sanity_val_steps=2,
     default_root_dir="logs",
 )

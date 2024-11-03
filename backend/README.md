@@ -1,1 +1,0 @@
-# Crop Disease Prediction Backend

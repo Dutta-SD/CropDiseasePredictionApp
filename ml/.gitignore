@@ -2,3 +2,5 @@ input/*
 !input/.gitkeep
 logs/*
 *.pyc
+venv
+.venv

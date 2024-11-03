@@ -16,4 +16,4 @@ class ModelConfig:
     IMG_STD: tuple = (0.485, 0.456, 0.406)
     IMG_MEAN: tuple = (0.229, 0.224, 0.225)
     VAL_LOSS: str = "VL"
-    PRETRAINED_MODEL_NAME: str = "efficientnet_b0"
+    PRETRAINED_MODEL_NAME: str = "resnet_50"

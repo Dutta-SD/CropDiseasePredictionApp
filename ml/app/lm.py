@@ -4,7 +4,7 @@ import torch
 from lightning import LightningModule
 from torch import nn, Tensor
 from torch.nn import functional as F
-from torch.optim import Adam
+from torch.optim import AdamW
 
 
 class ClassificationModule(LightningModule):
@@ -21,7 +21,7 @@ class ClassificationModule(LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        optimizer = Adam(self.parameters(), lr=1e-3)
+        optimizer = AdamW(self.parameters(), lr=1e-3)
         return optimizer
 
     def training_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> torch.Tensor:
