@@ -3,7 +3,8 @@ import torchvision
 from torch import nn
 from torchvision.models import EfficientNet_B0_Weights, ResNet50_Weights
 
-from ml.app.config import ModelConfig
+from acfg.modelconfig import ModelConfig
+
 
 # TODO: Uncomment if needed
 # Pytorch fix for hash mismatch

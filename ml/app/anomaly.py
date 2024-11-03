@@ -4,7 +4,7 @@ import torch
 from lightning import LightningModule
 from torch.nn import functional as F
 
-from app.models.ood import Autoencoder
+from ml.app.models.ood import Autoencoder
 
 
 class DiseaseOODModule(LightningModule):

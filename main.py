@@ -1,12 +1,11 @@
 import gradio as gr
 
-from service.predict import generate_prediction_from_image
+from service.predict import workflow
 
 
 def process_image(image):
-    # Assume get_predictions is defined elsewhere and returns a label and explanation
-    label, explanation = generate_prediction_from_image(image)
-    return label, explanation
+    disease_name, remedy = workflow(image)
+    return disease_name, remedy
 
 
 # Create the Gradio interface

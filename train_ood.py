@@ -1,15 +1,16 @@
 from lightning import Trainer, seed_everything
 from lightning.pytorch.callbacks import ModelCheckpoint, TQDMProgressBar
 
-from app.anomaly import DiseaseOODModule
-from app.config import ModelConfig
-from app.data import ImageDataModule
+from acfg.modelconfig import ModelConfig
+from ml.app.anomaly import DiseaseOODModule
+from ml.app.data import ImageDataModule
+
+
 
 ckpt_callback = ModelCheckpoint(
-    dirpath="logs/PlantDiseaseOODModel",
-    filename="ood_model" + "_{epoch:02d}_{VL:.2f}",
+    filename="ood" + "_{epoch:02d}_{VL:.2f}",
     save_top_k=1,
-    mode="max",
+    mode="min",
     monitor=ModelConfig.VAL_LOSS,
 )
 
@@ -30,9 +31,7 @@ seed_everything(42)
 trainer = Trainer(
     max_epochs=100,
     callbacks=[ckpt_callback, tqdm_callback],
-    accelerator="gpu",
     num_sanity_val_steps=2,
-    default_root_dir="logs",
 )
 
 

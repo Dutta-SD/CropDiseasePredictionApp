@@ -21,7 +21,8 @@ class ClassificationModule(LightningModule):
         return self.model(x)
 
     def configure_optimizers(self):
-        optimizer = AdamW(self.parameters(), lr=1e-3)
+        # Low lr as we would be fine tuning a backbone
+        optimizer = AdamW(self.parameters(), lr=1e-5)
         return optimizer
 
     def training_step(self, batch: Tuple[torch.Tensor, ...], batch_idx: int) -> torch.Tensor:

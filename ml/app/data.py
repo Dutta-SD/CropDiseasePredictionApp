@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms as T
 from torchvision.datasets import ImageFolder
 
-from app.config import ModelConfig
+from acfg.modelconfig import ModelConfig
 
 
 class ImageDataModule(LightningDataModule):

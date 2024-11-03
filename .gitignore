@@ -5,3 +5,10 @@ service/static
 logs
 
 .env
+lightning_logs
+input/*
+!input/.gitkeep
+logs/*
+*.pyc
+venv
+.venv

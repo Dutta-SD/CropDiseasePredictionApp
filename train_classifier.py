@@ -1,15 +1,16 @@
 from lightning import Trainer, seed_everything
 from lightning.pytorch.callbacks import ModelCheckpoint, TQDMProgressBar
 
-from app.config import ModelConfig
-from app.data import ImageDataModule
-from app.lm import ClassificationModule
-from app.models.classification import DiseaseClassificationModel
+from acfg.modelconfig import ModelConfig
+from ml.app.data import ImageDataModule
+from ml.app.lm import ClassificationModule
+from ml.app.models.classification import DiseaseClassificationModel
+
 
 ckpt_callback = ModelCheckpoint(
-    filename="model" + "_{epoch:02d}_{VA:.2f}",
+    filename="classification" + "_{epoch:02d}_{VA:.2f}",
     save_top_k=1,
-    mode="max",
+    mode="min",
     monitor=ModelConfig.VAL_LOSS,
 )
 
