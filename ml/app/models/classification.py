@@ -1,7 +1,7 @@
 import torch
 import torchvision
 from torch import nn
-from torchvision.models import EfficientNet_B0_Weights, ResNet50_Weights
+from torchvision.models import EfficientNet_B0_Weights, ResNet50_Weights, MobileNet_V3_Small_Weights
 
 from acfg.modelconfig import ModelConfig
 
@@ -39,7 +39,6 @@ class PretrainedModelFactory:
     @staticmethod
     def _efficientnet_b0():
         model = torchvision.models.efficientnet_b0(weights=EfficientNet_B0_Weights.DEFAULT)
-        __class__._freeze_pretrained_weights(model)
         model.classifier = MLPHead(
             in_features=model.classifier[1].in_features,
             num_output_classes=ModelConfig.NUM_OUTPUT_CLASSES,
@@ -49,7 +48,6 @@ class PretrainedModelFactory:
     @staticmethod
     def _resnet_50():
         model = torchvision.models.resnet50(weights=ResNet50_Weights.DEFAULT)
-        __class__._freeze_pretrained_weights(model)
         model.fc = MLPHead(
             in_features=model.fc.in_features,
             num_output_classes=ModelConfig.NUM_OUTPUT_CLASSES,
@@ -58,8 +56,12 @@ class PretrainedModelFactory:
 
     @staticmethod
     def _mobilenet_v3_small():
-        raise NotImplementedError
-
+        model = torchvision.models.mobilenet_v3_small(weights=MobileNet_V3_Small_Weights.DEFAULT)
+        model.classifier = MLPHead(
+            in_features=model.classifier[0].in_features,
+            num_output_classes=ModelConfig.NUM_OUTPUT_CLASSES,
+        )
+        return model
     @staticmethod
     def _vit_b_16():
         raise NotImplementedError
