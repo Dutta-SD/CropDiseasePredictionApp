@@ -17,4 +17,4 @@ jobs:
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push --force https://sdutta28:$HF_TOKEN@huggingface.co/spaces/sdutta28/CDIApp main
+        run: git lfs fetch --all && git push --force https://sdutta28:$HF_TOKEN@huggingface.co/spaces/sdutta28/CDIApp main
