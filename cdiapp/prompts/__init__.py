@@ -8,6 +8,9 @@ INSTRUCTIONS:
 5. Do NOT add any text before or after the template
 6. Do NOT use emojis
 7. Each <FILL> must be replaced — never leave a <FILL> tag in your response
+8. You MUST include a blank line (newline) before and after every ### header
+9. You MUST include a blank line between each section
+10. Sections are separated by TWO newlines (\n\n) — this is critical for rendering
 
 OUTPUT TEMPLATE (copy this exactly, replace all <FILL> tags):
 
