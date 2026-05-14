@@ -1,7 +1,7 @@
 import chainlit as cl
 
 from cdiapp.prompts import SYSTEM_PROMPT
-from cdiapp.components.llm import call_llm
+from cdiapp.components.llm import call_llm, RateLimitError
 from cdiapp.utils.image import encode_image
 
 
@@ -36,5 +36,7 @@ async def on_message(message: cl.Message):
     try:
         result = await call_llm(messages)
         await cl.Message(content=result).send()
-    except Exception as e:
-        await cl.Message(content=f"⚠️ Error: {e}").send()
+    except RateLimitError:
+        await cl.Message(content="⏳ The AI service is busy right now. Please try again in a minute.").send()
+    except Exception:
+        await cl.Message(content="⚠️ Something went wrong. Please try again.").send()
