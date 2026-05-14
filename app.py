@@ -1,13 +1,14 @@
 import os
 import time
+import base64
+import httpx
 
 import chainlit as cl
-from google import genai
 from starlette.responses import JSONResponse
 
-# Configure Gemini client
-client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-MODEL = "gemini-2.0-flash"
+OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
+MODEL = "google/gemma-4-31b-it:free"
+API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 SYSTEM_PROMPT = """You are an expert plant pathologist. When shown an image of a plant leaf or crop:
 1. Identify the disease (or say healthy)
@@ -21,6 +22,17 @@ Respond in markdown."""
 _start_time = time.time()
 
 
+async def call_openrouter(messages):
+    async with httpx.AsyncClient(timeout=60) as client:
+        resp = await client.post(
+            API_URL,
+            headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
+            json={"model": MODEL, "messages": messages},
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"]
+
+
 @cl.on_chat_start
 async def start():
     await cl.Message(
@@ -32,20 +44,29 @@ async def start():
 async def on_message(message: cl.Message):
     images = [f for f in (message.elements or []) if f.mime and f.mime.startswith("image/")]
 
-    parts = [SYSTEM_PROMPT]
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
     if images:
         img_data = images[0].content if images[0].content else open(images[0].path, "rb").read()
-        parts.append(genai.types.Part.from_bytes(data=img_data, mime_type=images[0].mime))
-        parts.append(message.content or "Diagnose this plant leaf.")
+        b64 = base64.b64encode(img_data).decode()
+        messages.append({
+            "role": "user",
+            "content": [
+                {"type": "image_url", "image_url": {"url": f"data:{images[0].mime};base64,{b64}"}},
+                {"type": "text", "text": message.content or "Diagnose this plant leaf."},
+            ],
+        })
     elif message.content:
-        parts.append(message.content)
+        messages.append({"role": "user", "content": message.content})
     else:
         await cl.Message(content="Please upload an image or ask a question.").send()
         return
 
-    response = client.models.generate_content(model=MODEL, contents=parts)
-    await cl.Message(content=response.text).send()
+    try:
+        result = await call_openrouter(messages)
+        await cl.Message(content=result).send()
+    except httpx.HTTPStatusError as e:
+        await cl.Message(content=f"⚠️ API error: {e.response.status_code} — {e.response.text}").send()
 
 
 # /health endpoint
