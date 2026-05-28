@@ -1,0 +1,14 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+.env
+.env.example
+.chainlit/translations
+.DS_Store
+notebooks
+data
+weights
+docs
+tests
