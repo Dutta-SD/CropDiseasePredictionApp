@@ -37,14 +37,28 @@ App listens on `http://localhost:7860`.
 
 ## Deploy to Hugging Face Spaces
 
-1. Create a new Space with **Docker** SDK at https://huggingface.co/new-space.
-2. In the Space's **Settings → Variables and secrets**, add `OPENROUTER_API_KEY`.
-3. Push this repo to the Space:
+GitHub is the canonical repo. The HF Space is a deploy target — push to both with one extra command.
+
+One-time setup (already done for `sdutta28/crop-disease-diagnosis`):
+
+1. Create the Space at <https://huggingface.co/new-space> with **Docker** SDK.
+2. Add `OPENROUTER_API_KEY` under **Settings → Variables and secrets**.
+3. Add the Space as a second git remote:
+
    ```bash
-   git remote add space https://huggingface.co/spaces/<username>/<space-name>
-   git push space main
+   git remote add hf https://huggingface.co/spaces/<user>/<space-name>
    ```
-4. The Space auto-builds the Dockerfile and exposes the app on port `7860`.
+
+Each deploy:
+
+```bash
+git push origin mainline             # canonical → GitHub
+git push hf mainline:main            # deploy    → HF Space (rebuilds Docker image)
+```
+
+The Space's branch is `main` while local branch is `mainline`; the `mainline:main` mapping handles that.
+
+Live at: <https://sdutta28-crop-disease-diagnosis.hf.space>
 
 ## Stack
 
