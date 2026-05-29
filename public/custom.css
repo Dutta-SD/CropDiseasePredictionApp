@@ -1,0 +1,97 @@
+/* ── Crop Disease Diagnosis — custom UI ── */
+
+:root {
+  --green-primary: #2d6a4f;
+  --green-light:   #52b788;
+  --green-dim:     #1b4332;
+  --bg-dark:       #0d1117;
+  --bg-surface:    #161b22;
+  --bg-card:       #1c2128;
+  --text-main:     #e6edf3;
+  --text-muted:    #8b949e;
+  --border:        #30363d;
+}
+
+/* Base background */
+body,
+#root,
+.MuiBox-root {
+  background-color: var(--bg-dark) !important;
+  color: var(--text-main) !important;
+}
+
+/* Header */
+header {
+  background-color: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* Sidebar / chat list */
+.sidebar,
+[class*="Sidebar"] {
+  background-color: var(--bg-surface) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+/* Chat message bubbles — assistant */
+[class*="Message"]:not([class*="User"]) {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+}
+
+/* Diagnosis section headers */
+[class*="Message"] h3 {
+  color: var(--green-light) !important;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin-top: 16px;
+}
+
+/* Message composer */
+[class*="InputBox"],
+textarea,
+[contenteditable="true"] {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  color: var(--text-main) !important;
+}
+
+[class*="InputBox"]:focus-within,
+textarea:focus {
+  border-color: var(--green-light) !important;
+  box-shadow: 0 0 0 2px rgba(82, 183, 136, 0.15) !important;
+}
+
+/* Send / action buttons */
+button[type="submit"],
+[class*="SendButton"] {
+  background-color: var(--green-primary) !important;
+  color: #fff !important;
+  border-radius: 6px !important;
+}
+
+button[type="submit"]:hover,
+[class*="SendButton"]:hover {
+  background-color: var(--green-light) !important;
+}
+
+/* Severity pill — colour-coded */
+[class*="Message"] p:has(> strong:first-child) {
+  padding: 2px 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--green-primary); }
+
+/* Welcome screen card */
+[class*="WelcomeScreen"],
+[class*="Welcome"] {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+}
