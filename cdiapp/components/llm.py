@@ -2,7 +2,12 @@ import logging
 import os
 
 import httpx
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 from cdiapp.components.parsing import parse_diagnosis
 from cdiapp.schema import DiagnosisOutput, SchemaViolationError

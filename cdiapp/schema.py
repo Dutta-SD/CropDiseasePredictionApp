@@ -11,7 +11,7 @@ feed it back to the model for self-correction.
 
 from __future__ import annotations
 
-from typing import Annotated, Literal, Union
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, ValidationError, conlist
 
@@ -32,7 +32,7 @@ class NotAPlant(BaseModel):
 
 
 DiagnosisOutput = Annotated[
-    Union[PlantDiagnosis, NotAPlant],
+    PlantDiagnosis | NotAPlant,
     Field(discriminator="kind"),
 ]
 
@@ -47,9 +47,9 @@ class SchemaViolationError(ValueError):
 
 
 __all__ = [
-    "PlantDiagnosis",
-    "NotAPlant",
     "DiagnosisOutput",
+    "NotAPlant",
+    "PlantDiagnosis",
     "SchemaViolationError",
     "ValidationError",
 ]

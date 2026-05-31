@@ -1,7 +1,7 @@
 import time
 
-from starlette.responses import JSONResponse
 from chainlit.server import app
+from starlette.responses import JSONResponse
 
 _start_time = time.time()
 

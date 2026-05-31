@@ -10,6 +10,7 @@ from cdiapp.utils.image import encode_image
 
 log = logging.getLogger(__name__)
 
+
 @cl.set_starters
 async def starters():
     return [
@@ -20,7 +21,9 @@ async def starters():
         ),
         cl.Starter(
             label="When should I worry about yellow leaves?",
-            message="My plant has a few yellowing leaves. When is that normal vs. a sign of disease?",
+            message=(
+                "My plant has a few yellowing leaves. When is that normal vs. a sign of disease?"
+            ),
             icon="/public/leaf.svg",
         ),
         cl.Starter(
@@ -30,7 +33,9 @@ async def starters():
         ),
         cl.Starter(
             label="What is a KVK / extension officer?",
-            message="What is a KVK or extension officer, and what should I bring when I consult one?",
+            message=(
+                "What is a KVK or extension officer, and what should I bring when I consult one?"
+            ),
             icon="/public/leaf.svg",
         ),
     ]
@@ -49,14 +54,21 @@ async def on_message(message: cl.Message):
 
 
 async def _handle_image(message: cl.Message, image) -> None:
-    img_data = image.content if image.content else open(image.path, "rb").read()
+    if image.content:
+        img_data = image.content
+    else:
+        with open(image.path, "rb") as f:
+            img_data = f.read()
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {
             "role": "user",
             "content": [
                 encode_image(img_data, image.mime),
-                {"type": "text", "text": message.content or "Diagnose this plant leaf."},
+                {
+                    "type": "text",
+                    "text": message.content or "Diagnose this plant leaf.",
+                },
             ],
         },
     ]
@@ -64,7 +76,9 @@ async def _handle_image(message: cl.Message, image) -> None:
     try:
         diagnosis = await call_llm_typed(messages)
     except RateLimitError:
-        await cl.Message(content="⏳ The AI service is busy right now. Please try again in a minute.").send()
+        await cl.Message(
+            content="⏳ The AI service is busy right now. Please try again in a minute."
+        ).send()
         return
     except SchemaViolationError:
         await cl.Message(
@@ -95,7 +109,9 @@ async def _handle_text_followup(text: str) -> None:
     try:
         reply = await call_llm(messages)
     except RateLimitError:
-        await cl.Message(content="⏳ The AI service is busy right now. Please try again in a minute.").send()
+        await cl.Message(
+            content="⏳ The AI service is busy right now. Please try again in a minute."
+        ).send()
         return
     except Exception:
         log.exception("on_message.text_failure")

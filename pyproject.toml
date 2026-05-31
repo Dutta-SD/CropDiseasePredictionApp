@@ -1,0 +1,34 @@
+[project]
+name = "cdiapp"
+version = "0.1.0"
+description = "Plant disease triage — Chainlit + vision LLM"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [".venv", ".chainlit", "public", ".files"]
+
+[tool.ruff.lint]
+# E/W   — pycodestyle errors & warnings
+# F     — pyflakes (unused imports, undefined names, ...)
+# I     — isort (import sorting; replaces the standalone isort tool)
+# B     — flake8-bugbear (likely-bug patterns)
+# UP    — pyupgrade (modern syntax)
+# SIM   — flake8-simplify
+# RUF   — ruff-specific rules
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "RUF"]
+
+# Star-imports in app.py are intentional — they register Chainlit handlers
+# as a side effect of import.
+[tool.ruff.lint.per-file-ignores]
+"app.py" = ["F401", "F403"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cdiapp"]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

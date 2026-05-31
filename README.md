@@ -26,6 +26,21 @@ chainlit run app.py
 
 App listens on `http://localhost:8000` by default.
 
+## Lint and format
+
+Ruff handles both linting and import sorting (it replaces the standalone
+`isort` tool — same author, single tool, no config conflicts).
+
+```bash
+pip install -r requirements-dev.txt
+ruff check .              # lint (E/W/F/I/B/UP/SIM/RUF rules)
+ruff check --fix .        # apply auto-fixes
+ruff format .             # format (Black-compatible style)
+ruff format --check .     # verify formatted, no changes
+```
+
+Configuration lives in `pyproject.toml`.
+
 ## Run with Docker
 
 ```bash
