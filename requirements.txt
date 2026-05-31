@@ -2,3 +2,4 @@ chainlit>=2.0
 httpx>=0.27
 websockets
 tenacity>=8.0
+pydantic>=2.6
