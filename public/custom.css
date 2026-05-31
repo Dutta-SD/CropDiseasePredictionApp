@@ -1,97 +1,116 @@
-/* ── Crop Disease Diagnosis — custom UI ── */
+/* Crop Disease Triage — Chainlit theme overrides.
+ *
+ * Chainlit 2.x uses shadcn/Tailwind CSS variables (HSL triplets) for theming.
+ * Override the variables on `.dark` rather than chasing brittle class hashes
+ * like `[class*="SendButton"]` — those change between Chainlit releases.
+ */
 
-:root {
-  --green-primary: #2d6a4f;
-  --green-light:   #52b788;
-  --green-dim:     #1b4332;
-  --bg-dark:       #0d1117;
-  --bg-surface:    #161b22;
-  --bg-card:       #1c2128;
-  --text-main:     #e6edf3;
-  --text-muted:    #8b949e;
-  --border:        #30363d;
+/* Higher specificity than Chainlit's bare `.dark{...}` block, which loads
+ * AFTER this file. Without `html.dark` the green primary loses to Chainlit's
+ * pink default by source-order tie-break. */
+html:root,
+html.dark {
+  /* Greens (HSL triplets, no hsl() wrapper). */
+  --primary: 152 55% 42%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 152 55% 42%;
+  --sidebar-primary: 152 55% 42%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-ring: 152 55% 42%;
+
+  /* Surfaces — a touch warmer than pure black, with depth between layers. */
+  --background: 150 8% 7%;
+  --foreground: 150 6% 93%;
+  --card: 150 8% 10%;
+  --card-foreground: 150 6% 95%;
+  --popover: 150 8% 10%;
+  --popover-foreground: 150 6% 95%;
+  --secondary: 150 6% 14%;
+  --secondary-foreground: 150 6% 93%;
+  --muted: 150 5% 16%;
+  --muted-foreground: 150 4% 65%;
+  --accent: 152 30% 18%;
+  --accent-foreground: 150 30% 90%;
+  --border: 150 6% 18%;
+  --input: 150 6% 18%;
+
+  --sidebar-background: 150 9% 6%;
+  --sidebar-foreground: 150 6% 90%;
+  --sidebar-accent: 150 8% 12%;
+  --sidebar-accent-foreground: 150 6% 95%;
+  --sidebar-border: 150 6% 14%;
+
+  --radius: 0.625rem;
 }
 
-/* Base background */
-body,
-#root,
-.MuiBox-root {
-  background-color: var(--bg-dark) !important;
-  color: var(--text-main) !important;
+/* Subtle gradient on the page background for depth. */
+body {
+  background:
+    radial-gradient(circle at 12% 0%, hsl(152 35% 12% / 0.55) 0%, transparent 45%),
+    radial-gradient(circle at 90% 100%, hsl(160 25% 10% / 0.45) 0%, transparent 50%),
+    hsl(var(--background));
+  background-attachment: fixed;
 }
 
-/* Header */
-header {
-  background-color: var(--bg-surface) !important;
-  border-bottom: 1px solid var(--border) !important;
+/* Diagnosis section headers — use the markdown's h3 directly. */
+.markdown-body h3,
+[class*="prose"] h3,
+.cl-message h3 {
+  color: hsl(152 55% 62%);
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 0.35rem;
+  margin-top: 1rem;
+  letter-spacing: 0.01em;
 }
 
-/* Sidebar / chat list */
-.sidebar,
-[class*="Sidebar"] {
-  background-color: var(--bg-surface) !important;
-  border-right: 1px solid var(--border) !important;
+/* Disclaimer footer (italic em element after the diagnosis hr). */
+.markdown-body hr+p em,
+[class*="prose"] hr+p em {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+  display: block;
+  padding-top: 0.25rem;
+  line-height: 1.5;
 }
 
-/* Chat message bubbles — assistant */
-[class*="Message"]:not([class*="User"]) {
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
-}
-
-/* Diagnosis section headers */
-[class*="Message"] h3 {
-  color: var(--green-light) !important;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 4px;
-  margin-top: 16px;
-}
-
-/* Message composer */
-[class*="InputBox"],
-textarea,
-[contenteditable="true"] {
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
-  color: var(--text-main) !important;
-}
-
-[class*="InputBox"]:focus-within,
+/* Soft green border on focused composer. */
+[contenteditable="true"]:focus,
 textarea:focus {
-  border-color: var(--green-light) !important;
-  box-shadow: 0 0 0 2px rgba(82, 183, 136, 0.15) !important;
+  outline: none;
+  box-shadow: 0 0 0 1.5px hsl(152 55% 42% / 0.5);
 }
 
-/* Send / action buttons */
-button[type="submit"],
-[class*="SendButton"] {
-  background-color: var(--green-primary) !important;
-  color: #fff !important;
-  border-radius: 6px !important;
+/* Empty-state logo: scale up our custom SVG so the brand reads as a hero,
+ * not a dropdown. The default Chainlit logo is ~32px tall; bump ours to 64px
+ * while keeping aspect ratio intact. */
+img[src*="logo_dark.svg"],
+img[src*="logo_light.svg"] {
+  height: 4rem !important;
+  width: auto !important;
+  max-width: 24rem;
 }
 
-button[type="submit"]:hover,
-[class*="SendButton"]:hover {
-  background-color: var(--green-light) !important;
+/* Add a tagline below the empty-state logo via CSS only (keeps backend clean). */
+img[src*="logo_dark.svg"]+*,
+img[src*="logo_light.svg"]+* {
+  margin-top: 0.5rem;
 }
 
-/* Severity pill — colour-coded */
-[class*="Message"] p:has(> strong:first-child) {
-  padding: 2px 0;
+/* Slimmer, themed scrollbar. */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-dark); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--green-primary); }
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-/* Welcome screen card */
-[class*="WelcomeScreen"],
-[class*="Welcome"] {
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 12px !important;
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(152 35% 30%);
 }

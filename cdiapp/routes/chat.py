@@ -10,19 +10,30 @@ from cdiapp.utils.image import encode_image
 
 log = logging.getLogger(__name__)
 
-WELCOME = (
-    "🌿 **Plant Disease Triage**\n\n"
-    "Upload a photo of a plant leaf and I'll identify likely problems and suggest "
-    "next steps. I don't prescribe treatments — for chemicals, doses, or anything "
-    "you're unsure about, please consult your local extension officer (KVK) or "
-    "qualified agronomist.\n\n"
-    "You can ask follow-up questions about the diagnosis."
-)
-
-
-@cl.on_chat_start
-async def start():
-    await cl.Message(content=WELCOME).send()
+@cl.set_starters
+async def starters():
+    return [
+        cl.Starter(
+            label="What does a healthy leaf look like?",
+            message="What visual features distinguish a healthy plant leaf from a diseased one?",
+            icon="/public/leaf.svg",
+        ),
+        cl.Starter(
+            label="When should I worry about yellow leaves?",
+            message="My plant has a few yellowing leaves. When is that normal vs. a sign of disease?",
+            icon="/public/leaf.svg",
+        ),
+        cl.Starter(
+            label="How do I take a good photo for diagnosis?",
+            message="What's the best way to photograph a leaf so you can diagnose it accurately?",
+            icon="/public/leaf.svg",
+        ),
+        cl.Starter(
+            label="What is a KVK / extension officer?",
+            message="What is a KVK or extension officer, and what should I bring when I consult one?",
+            icon="/public/leaf.svg",
+        ),
+    ]
 
 
 @cl.on_message

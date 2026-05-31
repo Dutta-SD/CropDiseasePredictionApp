@@ -1,10 +1,7 @@
-# 🌿 Crop Disease Diagnosis
+# 🌿 Plant Disease Triage
 
-Upload a photo of a plant leaf and get an instant diagnosis — disease name, confidence, severity, and a treatment plan.
+Upload a photo of a plant leaf and I'll identify likely problems and suggest next steps.
 
-**How to use:**
-1. Click the attachment icon and upload a leaf photo
-2. Optionally add a note (e.g. "leaves turning yellow")
-3. Get a structured diagnosis report
+**This is a triage tool, not a treatment prescription.** For chemicals, doses, or anything you're unsure about, please consult your local extension officer (KVK) or a qualified agronomist.
 
-**Follow-up questions are welcome** — ask about treatment details, prevention, or anything else about the diagnosis.
+Pick a starter below, or upload a leaf photo to begin.
