@@ -3,6 +3,7 @@ import logging
 import chainlit as cl
 
 from cdiapp.components.llm import RateLimitError, call_llm, call_llm_typed
+from cdiapp.preprocess import GateReject, gate
 from cdiapp.prompts import FOLLOWUP_PROMPT, SYSTEM_PROMPT
 from cdiapp.render import render
 from cdiapp.schema import SchemaViolationError
@@ -59,12 +60,18 @@ async def _handle_image(message: cl.Message, image) -> None:
     else:
         with open(image.path, "rb") as f:
             img_data = f.read()
+
+    gate_result = gate(img_data, image.mime)
+    if isinstance(gate_result, GateReject):
+        await cl.Message(content=gate_result.message).send()
+        return
+
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {
             "role": "user",
             "content": [
-                encode_image(img_data, image.mime),
+                encode_image(gate_result.data, gate_result.mime),
                 {
                     "type": "text",
                     "text": message.content or "Diagnose this plant leaf.",

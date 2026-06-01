@@ -3,3 +3,5 @@ httpx>=0.27
 websockets
 tenacity>=8.0
 pydantic>=2.6
+Pillow>=10.0
+numpy>=1.26
