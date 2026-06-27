@@ -13,8 +13,16 @@ from cdiapp.components.parsing import parse_diagnosis
 from cdiapp.schema import DiagnosisOutput, SchemaViolationError
 
 OPENROUTER_API_KEY = os.environ["OPENROUTER_API_KEY"]
-MODEL = "nvidia/nemotron-nano-12b-v2-vl:free"
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+# Free-tier vision models. The `models` array triggers OpenRouter's fallback
+# routing: it tries each in order when a model is rate-limited or unavailable.
+# All entries use the :free suffix — no paid models are ever selected.
+FREE_VISION_MODELS = [
+    "nvidia/nemotron-nano-12b-v2-vl:free",
+    "meta-llama/llama-3.2-11b-vision-instruct:free",
+    "qwen/qwen2.5-vl-7b-instruct:free",
+]
 
 log = logging.getLogger(__name__)
 
@@ -34,7 +42,7 @@ async def call_llm(messages: list[dict]) -> str:
         resp = await client.post(
             API_URL,
             headers={"Authorization": f"Bearer {OPENROUTER_API_KEY}"},
-            json={"model": MODEL, "messages": messages},
+            json={"models": FREE_VISION_MODELS, "messages": messages},
         )
         if resp.status_code == 429:
             raise RateLimitError()
